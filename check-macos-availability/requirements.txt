@@ -1,0 +1,4 @@
+# check-macos-availability requirements
+# Core detection uses built-in wmic + PowerShell (no third-party libs needed).
+# Optional: improves ANSI colour on older Windows terminals.
+colorama>=0.4.6 ; sys_platform == "win32"

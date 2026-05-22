@@ -1,0 +1,5 @@
+# check-macos-availability dependencies
+# All hardware detection uses built-in wmic / PowerShell calls on Windows.
+# No third-party packages are strictly required for core functionality.
+# Optional extras:
+colorama>=0.4.6   ; sys_platform == "win32"   # ANSI colour fallback on Windows

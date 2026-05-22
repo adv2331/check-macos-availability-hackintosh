@@ -1,65 +1,59 @@
-# check-macos-availability
+# check-macos-availability 🍎
 
-Check if your Windows computer can support macOS.
+> **Check if your Windows PC can run macOS (Hackintosh)**
 
-## What is this?
-
-`check-macos-availability` scans your Windows PC and determines whether it can run macOS (Hackintosh).
-
-It checks your hardware and gives:
-- compatibility status
-- a score
-- unsupported components
-- suggested fixes
+`check-macos-availability` scans your Windows hardware and tells you
+whether it is compatible with macOS via OpenCore.
 
 ---
 
-## Features
+## What it checks
 
-- Detect CPU compatibility
-- Detect GPU compatibility
-- Check RAM requirements
-- Check storage compatibility
-- Check motherboard/chipset support
-- Detect Wi-Fi/Bluetooth support
-- Detect BIOS mode (UEFI/Legacy)
-- Compatibility score output
-- Suggestions for unsupported hardware
+| Component | Details |
+|-----------|---------|
+| CPU | Vendor, model, generation, AVX2 support |
+| GPU | Vendor, model, driver availability |
+| RAM | Total capacity vs. macOS minimums |
+| Storage | Drive type (NVMe / SATA SSD / HDD) and size |
+| Wi-Fi | Adapter model and kext availability |
+| Motherboard | Vendor, chipset, known quirks |
+| BIOS/Firmware | UEFI vs Legacy, Secure Boot, TPM |
 
 ---
 
-## Example Output
+## Example output
 
-```text
-=== macOS Compatibility Report ===
+```
+============================================================
+              macOS Compatibility Report
+============================================================
 
-CPU: Intel Core i7-10700K      ✅ Supported
-GPU: NVIDIA RTX 3070           ❌ Unsupported
-RAM: 32GB                      ✅ Supported
-Storage: NVMe SSD              ✅ Supported
-Wi-Fi: Intel AX200             ✅ Supported
+CPU           Intel Core i7-10700K          ✅ Supported
+GPU           NVIDIA RTX 3070               ❌ Unsupported
+               → Pascal+ NVIDIA GPUs have no macOS driver.
+RAM           32 GB                          ✅ Supported
+Storage       NVMe SSD (1000 GB)             ✅ Supported
+Wi-Fi         Intel AX200                    ✅ Supported
+Motherboard   ASUS ROG STRIX Z490-E          ✅ Supported
+BIOS/Firmware UEFI                           ✅ Supported
 
-Compatibility Score: 86%
+────────────────────────────────────────────────────────────
+  Compatibility Score:  [████████████████░░░░] 82%
+────────────────────────────────────────────────────────────
 
-Recommendation:
-Compatible with OpenCore.
-GPU may require replacement.
+  Recommendation:
+  Workable with some effort and BIOS tweaks.
+  Unsupported components: NVIDIA RTX 3070
+  Refer to https://dortania.github.io/OpenCore-Install-Guide/
 ```
 
 ---
 
 ## Installation
 
-Clone the repo:
-
 ```bash
 git clone https://github.com/yourusername/check-macos-availability.git
 cd check-macos-availability
-```
-
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
 ```
 
@@ -67,40 +61,22 @@ pip install -r requirements.txt
 
 ## Usage
 
-Run:
-
 ```bash
-python check.py
+python main.py          # standard scan
+python check.py         # alias — identical behaviour
+python main.py --json   # scan + export output/report.json
 ```
 
-or:
-
-```bash
-python main.py
-```
+> **Administrator privileges are recommended** so that WMIC and
+> PowerShell calls can read all hardware information.
 
 ---
 
-## Supported Checks
+## Supported macOS versions
 
-This tool checks:
-
-- CPU vendor/model
-- GPU model
-- Motherboard/chipset
-- RAM size
-- Storage type
-- Network adapters
-- BIOS mode
-- TPM/Secure Boot
-
----
-
-## Supported macOS Versions
-
-- macOS Ventura
-- macOS Sonoma
-- macOS Sequoia
+- macOS Ventura (13)
+- macOS Sonoma (14)
+- macOS Sequoia (15)
 
 ---
 
@@ -112,49 +88,50 @@ This tool checks:
 
 ---
 
+## Project structure
+
+```
+check-macos-availability/
+├── main.py               # Main entry point
+├── check.py              # Alias entry point
+├── reporter.py           # Terminal + JSON output
+├── requirements.txt
+├── checkers/
+│   ├── cpu.py
+│   ├── gpu.py
+│   ├── ram.py
+│   ├── storage.py
+│   ├── wifi.py
+│   ├── bios.py
+│   └── motherboard.py
+├── data/
+│   └── compat_db.py      # Hardware compatibility database
+└── output/               # JSON reports saved here
+```
+
+---
+
 ## Roadmap
 
-- [ ] GUI version
-- [ ] Export results to JSON
+- [ ] GUI version (Tkinter / web)
+- [ ] Export results to JSON (`--json` flag ✅ done)
 - [ ] Auto-download recommended kexts
-- [ ] OpenCore config suggestions
+- [ ] OpenCore `config.plist` suggestions
 - [ ] Linux support
 
 ---
 
 ## Disclaimer
 
-This tool does not install macOS.
-
-It only checks compatibility.
-
-Hackintosh support depends on firmware, BIOS settings, and driver availability.
+This tool **does not install macOS**. It only checks compatibility.
+Hackintosh success depends on firmware settings, BIOS version, and
+driver availability. Always consult the
+[Dortania OpenCore Install Guide](https://dortania.github.io/OpenCore-Install-Guide/).
 
 ---
 
 ## License
 
-MIT License
-
-Copyright (c) 2026 adv2331
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
----
+MIT License — Copyright (c) 2026 adv2331
 
 Built for the Hackintosh community 🍎
